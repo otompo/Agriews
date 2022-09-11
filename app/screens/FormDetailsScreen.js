@@ -55,15 +55,15 @@ function FormDetailsScreen({ route, navigation }) {
   }, []);
 
   const loadQuestions = async () => {
-    // setLoading(true)
+    setLoading(true);
     try {
       const { data } = await axios.get(
         `/agriews/getQuestionnaireByFormId/${form?.id}`
       );
       setQuestionsDails(JSON.parse(data[0].questionnaire));
-      // setLoading(false);
+      setLoading(false);
     } catch (err) {
-      // setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -145,21 +145,21 @@ function FormDetailsScreen({ route, navigation }) {
     }
   };
 
-  // if (loading) {
-  //   return (
-  //     <View
-  //       style={{
-  //         justifyContent: "center",
-  //         alignItems: "center",
-  //         display: "flex",
-  //         flex: 1,
-  //       }}
-  //     >
-  //       <ActivityIndicator size="large" />
-  //       <Text>Loading Questions ...</Text>
-  //     </View>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          display: "flex",
+          flex: 1,
+        }}
+      >
+        <ActivityIndicator size="large" />
+        <Text>Loading Questions ...</Text>
+      </View>
+    );
+  }
 
   return (
     <>

@@ -18,8 +18,8 @@ import Header from "../components/Header";
 import axios from "axios";
 
 function Signin({ navigation }) {
-  const [username, setUserName] = useState("alai");
-  const [password, setPassword] = useState("alai");
+  const [username, setUserName] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [auth, setAuth] = useContext(AuthContext);
 
