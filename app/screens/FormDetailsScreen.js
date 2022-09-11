@@ -49,7 +49,7 @@ function FormDetailsScreen({ route, navigation }) {
   // const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-
+  // console.log(questionsDetails);
   useEffect(() => {
     loadQuestions();
   }, []);
@@ -554,7 +554,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-around",
-    marginBottom: 70,
+    marginBottom: 170,
     // marginHorizontal: 2,
     borderRadius: 5,
   },

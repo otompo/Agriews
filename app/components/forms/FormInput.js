@@ -691,7 +691,7 @@ export const SingleSelect = ({
         {type}
       </Text>
 
-      <View style={{ flexDirection: "row" }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <TouchableOpacity style={styles.idButton}>
           <Text semi style={{ fontWeight: "bold", color: colors.white }}>
             {pos}
@@ -720,18 +720,18 @@ export const SingleSelect = ({
             *
           </Text>
         ) : null}
+        {checked === "yes" ? (
+          <TouchableWithoutFeedback onPress={openCamera}>
+            <View style={styles.mediaContainer}>
+              <MaterialCommunityIcons
+                color={colors.medium}
+                name="image"
+                size={40}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+        ) : null}
       </View>
-      {checked === "yes" ? (
-        <TouchableWithoutFeedback onPress={openCamera}>
-          <View style={styles.mediaContainer}>
-            <MaterialCommunityIcons
-              color={colors.medium}
-              name="image"
-              size={40}
-            />
-          </View>
-        </TouchableWithoutFeedback>
-      ) : null}
       {image ? (
         <>
           <View style={styles.closeIcon}>
