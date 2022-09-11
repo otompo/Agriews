@@ -34,6 +34,7 @@ import {
   UserIntroductoryInput,
   UserSignatureCaptureInput,
   UserImageGeoTagInput,
+  SingleSelect,
 } from "../components/forms/FormInput";
 import SubmitButton from "../components/Button/SubmitButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -54,15 +55,15 @@ function FormDetailsScreen({ route, navigation }) {
   }, []);
 
   const loadQuestions = async () => {
-    setLoading(true);
+    // setLoading(true)
     try {
       const { data } = await axios.get(
         `/agriews/getQuestionnaireByFormId/${form?.id}`
       );
       setQuestionsDails(JSON.parse(data[0].questionnaire));
-      setLoading(false);
+      // setLoading(false);
     } catch (err) {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -144,7 +145,7 @@ function FormDetailsScreen({ route, navigation }) {
     }
   };
 
-  // if (initLoading) {
+  // if (loading) {
   //   return (
   //     <View
   //       style={{
@@ -297,7 +298,7 @@ function FormDetailsScreen({ route, navigation }) {
                                 </View>
                               ) : questionsDetail.type === "checkbox" ? (
                                 <View style={styles.questionCard}>
-                                  <UserSingleSelectInput
+                                  <SingleSelect
                                     name={questionsDetail.name}
                                     pos={questionsDetail.questionPosition}
                                     desc={questionsDetail.description}
@@ -335,7 +336,7 @@ function FormDetailsScreen({ route, navigation }) {
                                     autoCorrect={false}
                                   />
                                 </View>
-                              ) : questionsDetail.type === "Location" ? (
+                              ) : questionsDetail.type === "location" ? (
                                 <View style={styles.questionCard}>
                                   <UserImageGeoTagInput
                                     name={questionsDetail.name}
@@ -346,14 +347,6 @@ function FormDetailsScreen({ route, navigation }) {
                                     // id={questionsDetail.questionId}
                                   />
                                 </View>
-                              ) : questionsDetail.type === "SectionBreak" ? (
-                                <View style={styles.sectionBreak}>
-                                  <UserSectionBreakInput
-                                    name={questionsDetail.name}
-                                    pos={questionsDetail.questionPosition}
-                                    desc={questionsDetail.description}
-                                  />
-                                </View>
                               ) : questionsDetail.type === "Introductory" ? (
                                 <View style={styles.sectionBreak}>
                                   <UserIntroductoryInput
@@ -362,7 +355,7 @@ function FormDetailsScreen({ route, navigation }) {
                                     desc={questionsDetail.description}
                                   />
                                 </View>
-                              ) : questionsDetail.type === "Image" ? (
+                              ) : questionsDetail.type === "file" ? (
                                 <View style={styles.questionCard}>
                                   <View>
                                     <UserImageInput

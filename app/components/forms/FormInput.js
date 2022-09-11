@@ -637,6 +637,149 @@ export const UserImageInput = ({
   );
 };
 
+export const SingleSelect = ({
+  name,
+  pos,
+  desc,
+  type,
+  id,
+  questionsDetail,
+  questionMandatoryOption,
+  setFieldValue,
+  errors,
+  onChange,
+}) => {
+  const [checked, setChecked] = useState("");
+  const [image, setImage] = useState("");
+  useEffect(() => {
+    setFieldValue(id, checked, image);
+  }, [id, checked, image]);
+
+  const openCamera = async () => {
+    // Ask the user for the permission to access the camera
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.granted !== true) {
+      alert("You've refused to allow this app to access your camera!");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync();
+    // Explore the result
+    if (!result.cancelled) {
+      setFieldValue(result.uri);
+      setImage(result.uri);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    if (!image) setImage();
+    else
+      Alert.alert("Delete", "Are you sure you want to delete this image?", [
+        { text: "Yes", onPress: () => setImage(null) },
+        { text: "No" },
+      ]);
+  };
+
+  return (
+    <View style={{ marginHorizontal: 24 }}>
+      <Text
+        color={colors.primary}
+        style={{ textTransform: "uppercase", marginBottom: 7 }}
+      >
+        {type}
+      </Text>
+
+      <View style={{ flexDirection: "row" }}>
+        <TouchableOpacity style={styles.idButton}>
+          <Text semi style={{ fontWeight: "bold", color: colors.white }}>
+            {pos}
+          </Text>
+        </TouchableOpacity>
+
+        <Text
+          medium
+          color={colors.medium}
+          style={{
+            marginBottom: 5,
+            marginLeft: 10,
+            fontWeight: "bold",
+            textTransform: "capitalize",
+          }}
+        >
+          {name}
+        </Text>
+
+        {questionMandatoryOption === "1" ? (
+          <Text
+            semi
+            color={colors.danger}
+            style={{ marginLeft: 3, fontSize: 16 }}
+          >
+            *
+          </Text>
+        ) : null}
+      </View>
+      {checked === "yes" ? (
+        <TouchableWithoutFeedback onPress={openCamera}>
+          <View style={styles.mediaContainer}>
+            <MaterialCommunityIcons
+              color={colors.medium}
+              name="image"
+              size={40}
+            />
+          </View>
+        </TouchableWithoutFeedback>
+      ) : null}
+      {image ? (
+        <>
+          <View style={styles.closeIcon}>
+            <TouchableWithoutFeedback onPress={handleRemoveImage}>
+              <MaterialCommunityIcons
+                name="close-circle"
+                size={25}
+                color={colors.danger}
+              />
+            </TouchableWithoutFeedback>
+          </View>
+          <Image
+            source={{ uri: image }}
+            value={image}
+            onChange={onChange}
+            style={styles.image}
+          />
+        </>
+      ) : null}
+
+      <View>
+        <Text size={10} style={{ marginBottom: 5 }}>
+          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
+        </Text>
+      </View>
+      <View>
+        {questionsDetail.choices.map((item) => (
+          <>
+            <View style={{ marginBottom: 0.1, flexDirection: "row" }}>
+              <RadioButton
+                value={item}
+                status={checked === item ? "checked" : "unchecked"}
+                onPress={() => setChecked(item)}
+              />
+              <Text style={{ marginTop: 8 }}>{item}</Text>
+            </View>
+          </>
+        ))}
+      </View>
+      <View>
+        <Text size={10} style={{ marginBottom: 5 }}>
+          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
+        </Text>
+      </View>
+    </View>
+  );
+};
+
 export const UserImageGeoTagInput = ({
   name,
   pos,
@@ -928,6 +1071,8 @@ export const UserSingleSelectInput = ({
         >
           {name}
         </Text>
+
+        {checked === "yes" ? <Text>Upload And Image</Text> : null}
 
         {questionMandatoryOption === "1" ? (
           <Text
