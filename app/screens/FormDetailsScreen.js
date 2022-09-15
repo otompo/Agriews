@@ -45,11 +45,11 @@ var { width } = Dimensions.get("window");
 
 function FormDetailsScreen({ route, navigation }) {
   const form = route.params;
-  const [questionsDetails, setQuestionsDails] = useState([]);
+  const [questions, setQuestionsDails] = useState([]);
   // const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  // console.log(questionsDetails);
+  // console.log(questions);
   useEffect(() => {
     loadQuestions();
   }, []);
@@ -101,11 +101,11 @@ function FormDetailsScreen({ route, navigation }) {
   //lets get the initial values on the fields
   const initialVars = useMemo(() => {
     const values = {};
-    questionsDetails?.map((question) => {
+    questions?.map((question) => {
       return (values[question.questionId] = "");
     });
     return values;
-  }, [questionsDetails]);
+  }, [questions]);
 
   const handleSubmitForm = async (values) => {
     try {
@@ -145,20 +145,41 @@ function FormDetailsScreen({ route, navigation }) {
     }
   };
 
-  if (loading) {
-    return (
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          display: "flex",
-          flex: 1,
-        }}
-      >
-        <ActivityIndicator size="large" />
-        <Text>Loading Questions ...</Text>
-      </View>
-    );
+  // if (loading) {
+  //   return (
+  //     <View
+  //       style={{
+  //         justifyContent: "center",
+  //         alignItems: "center",
+  //         display: "flex",
+  //         flex: 1,
+  //       }}
+  //     >
+  //       <ActivityIndicator size="large" />
+  //       <Text>Loading Questions ...</Text>
+  //     </View>
+  //   );
+  // }
+
+  function component_visiblity(question, answers) {
+    if (Object.keys(question).indexOf("visibleIf") > -1) {
+      let conditions = question["visibleIf"];
+
+      //get the field via regex
+      let field = conditions.match(/{\w+}/gm)[0];
+      field_strip = field.replace(/[{,}]/g, "");
+
+      //get value of question using the question name
+      let value_to_question = answers[field_strip];
+      //now replace the strings in conditions  with values
+      let replaced = conditions.replace(/{\w+}/g, value_to_question);
+      //convert condition into javascript executable
+      let out = eval(replaced);
+
+      return out;
+    } else {
+      return true;
+    }
   }
 
   return (
@@ -180,10 +201,8 @@ function FormDetailsScreen({ route, navigation }) {
           style={styles.formContainer}
         >
           <Formik
-            // validationSchema={formValidationSchema}
             initialValues={initialVars}
             enableReinitialize={true}
-            //TODO: add validationScheme/ read about validation scheme and yup
             onSubmit={(values) => handleSubmitForm(values)}
           >
             {({
@@ -197,43 +216,43 @@ function FormDetailsScreen({ route, navigation }) {
               return (
                 <>
                   <View>
-                    {questionsDetails &&
-                      questionsDetails.map((questionsDetail) => {
+                    {questions &&
+                      questions.map((question, index) => {
                         return (
                           <>
-                            <View key={questionsDetail.questionId}>
-                              {questionsDetail.type === "tell" ? (
-                                <View style={styles.questionCard}>
-                                  <UserPhoneInput
-                                    name={questionsDetail.name}
-                                    pos={questionsDetail.questionPosition}
-                                    desc={questionsDetail.description}
-                                    type={questionsDetail.type}
-                                    onChange={handleChange(
-                                      questionsDetail.questionId
-                                    )}
-                                    questionMandatoryOption={
-                                      questionsDetail.questionMandatoryOption
-                                    }
-                                    keyboardType="numeric"
-                                  />
-                                </View>
-                              ) : questionsDetail.type === "text" ? (
+                            <View key={index}>
+                              {question.type === "tell" ? (
+                                component_visiblity(question, values) ? (
+                                  <View style={styles.questionCard}>
+                                    <UserPhoneInput
+                                      name={question.name}
+                                      pos={question.questionPosition}
+                                      desc={question.description}
+                                      type={question.type}
+                                      // onChange={handleChange(question.questionId)}
+                                      questionMandatoryOption={
+                                        question.questionMandatoryOption
+                                      }
+                                      keyboardType="numeric"
+                                    />
+                                  </View>
+                                ) : null
+                              ) : question.type === "text" ? (
                                 <View style={styles.questionCard}>
                                   <UserTextInput
-                                    name={questionsDetail.name}
-                                    pos={questionsDetail.questionPosition}
-                                    desc={questionsDetail.description}
-                                    type={questionsDetail.type}
-                                    // onChange={handleChange(questionsDetail.id)}
+                                    name={question.name}
+                                    pos={question.questionPosition}
+                                    desc={question.description}
+                                    type={question.type}
+                                    // onChange={handleChange(question.id)}
                                     questionMandatoryOption={
-                                      questionsDetail.questionMandatoryOption
+                                      question.questionMandatoryOption
                                     }
                                     autoCapitalize="words"
                                     autoCorrect={false}
                                   />
                                 </View>
-                              ) : questionsDetail.type === "date" ? (
+                              ) : question.type === "date" ? (
                                 <View style={styles.questionCard}>
                                   <View
                                     style={{
@@ -242,24 +261,24 @@ function FormDetailsScreen({ route, navigation }) {
                                     }}
                                   >
                                     <UserDateInput
-                                      name={questionsDetail.name}
-                                      // id={questionsDetail.questionId}
-                                      pos={questionsDetail.questionPosition}
-                                      desc={questionsDetail.description}
-                                      type={questionsDetail.type}
+                                      name={question.name}
+                                      // id={question.questionId}
+                                      pos={question.questionPosition}
+                                      desc={question.description}
+                                      type={question.type}
                                       setFieldValue={setFieldValue}
                                       onChange={handleChange(
-                                        questionsDetail.questionId
+                                        question.questionId
                                       )}
                                       questionMandatoryOption={
-                                        questionsDetail.questionMandatoryOption
+                                        question.questionMandatoryOption
                                       }
                                       autoCapitalize="words"
                                       autoCorrect={false}
                                     />
                                   </View>
                                 </View>
-                              ) : questionsDetail.type === "time" ? (
+                              ) : question.type === "time" ? (
                                 <View style={styles.questionCard}>
                                   <View
                                     style={{
@@ -268,238 +287,85 @@ function FormDetailsScreen({ route, navigation }) {
                                     }}
                                   >
                                     <UserTimeInput
-                                      name={questionsDetail.name}
-                                      pos={questionsDetail.questionPosition}
-                                      desc={questionsDetail.description}
-                                      type={questionsDetail.type}
+                                      name={question.name}
+                                      pos={question.questionPosition}
+                                      desc={question.description}
+                                      type={question.type}
                                       onChange={handleChange(
-                                        questionsDetail.questionId
+                                        question.questionId
                                       )}
                                       questionMandatoryOption={
-                                        questionsDetail.questionMandatoryOption
+                                        question.questionMandatoryOption
                                       }
                                       setFieldValue={setFieldValue}
-                                      // id={questionsDetail.questionId}
+                                      // id={question.questionId}
                                       autoCorrect={false}
                                     />
                                   </View>
                                 </View>
-                              ) : questionsDetail.type === "radiogroup" ? (
-                                <View style={styles.questionCard}>
-                                  <UserSingleSelectInput
-                                    name={questionsDetail.name}
-                                    pos={questionsDetail.questionPosition}
-                                    desc={questionsDetail.description}
-                                    questionsDetail={questionsDetail}
-                                    // id={questionsDetail.questionId}
-                                    setFieldValue={setFieldValue}
-                                    type={questionsDetail.type}
-                                  />
-                                </View>
-                              ) : questionsDetail.type === "checkbox" ? (
-                                <View style={styles.questionCard}>
-                                  <SingleSelect
-                                    name={questionsDetail.name}
-                                    pos={questionsDetail.questionPosition}
-                                    desc={questionsDetail.description}
-                                    questionsDetail={questionsDetail}
-                                    // id={questionsDetail.questionId}
-                                    setFieldValue={setFieldValue}
-                                    type={questionsDetail.type}
-                                  />
-                                </View>
-                              ) : questionsDetail.type === "MultipleChoice" ? (
+                              ) : question.type === "radiogroup" ? (
+                                component_visiblity(question, values) ? (
+                                  <View style={styles.questionCard}>
+                                    <UserSingleSelectInput
+                                      name={question.name}
+                                      pos={question.questionPosition}
+                                      desc={question.description}
+                                      question={question}
+                                      id={question.id}
+                                      setFieldValue={setFieldValue}
+                                      type={question.type}
+                                    />
+                                  </View>
+                                ) : null
+                              ) : question.type === "checkbox" ? (
+                                component_visiblity(question, values) ? (
+                                  <View style={styles.questionCard}>
+                                    <UserSingleSelectInput
+                                      name={question.name}
+                                      pos={question.questionPosition}
+                                      desc={question.description}
+                                      question={question}
+                                      // id={question.questionId}
+                                      setFieldValue={setFieldValue}
+                                      type={question.type}
+                                      // visibleIf={question.visibleIf}
+                                    />
+                                  </View>
+                                ) : null
+                              ) : question.type === "MultipleChoice" ? (
                                 <View style={styles.questionCard}>
                                   <UserMultySelectInput
                                     setFieldValue={setFieldValue}
-                                    name={questionsDetail.name}
-                                    pos={questionsDetail.questionPosition}
-                                    desc={questionsDetail.description}
-                                    type={questionsDetail.type}
-                                    questionsDetail={questionsDetail}
+                                    name={question.name}
+                                    pos={question.questionPosition}
+                                    desc={question.description}
+                                    type={question.type}
+                                    question={question}
                                   />
                                 </View>
-                              ) : questionsDetail.type === "Number" ? (
-                                <View style={styles.questionCard}>
-                                  <UserTextInput
-                                    name={questionsDetail.name}
-                                    pos={questionsDetail.questionPosition}
-                                    desc={questionsDetail.description}
-                                    type={questionsDetail.type}
-                                    onChange={handleChange(
-                                      questionsDetail.questionId
-                                    )}
-                                    questionMandatoryOption={
-                                      questionsDetail.questionMandatoryOption
-                                    }
-                                    keyboardType="numeric"
-                                    autoCorrect={false}
-                                  />
-                                </View>
-                              ) : questionsDetail.type === "location" ? (
+                              ) : question.type === "location" ? (
                                 <View style={styles.questionCard}>
                                   <UserImageGeoTagInput
-                                    name={questionsDetail.name}
-                                    pos={questionsDetail.questionPosition}
-                                    desc={questionsDetail.description}
-                                    type={questionsDetail.type}
+                                    name={question.name}
+                                    pos={question.questionPosition}
+                                    desc={question.description}
+                                    type={question.type}
                                     setFieldValue={setFieldValue}
-                                    // id={questionsDetail.questionId}
+                                    // id={question.questionId}
                                   />
                                 </View>
-                              ) : questionsDetail.type === "Introductory" ? (
-                                <View style={styles.sectionBreak}>
-                                  <UserIntroductoryInput
-                                    name={questionsDetail.name}
-                                    pos={questionsDetail.questionPosition}
-                                    desc={questionsDetail.description}
-                                  />
-                                </View>
-                              ) : questionsDetail.type === "file" ? (
+                              ) : question.type === "file" ? (
                                 <View style={styles.questionCard}>
                                   <View>
                                     <UserImageInput
-                                      name={questionsDetail.name}
-                                      pos={questionsDetail.questionPosition}
-                                      desc={questionsDetail.description}
-                                      type={questionsDetail.type}
+                                      name={question.name}
+                                      pos={question.questionPosition}
+                                      desc={question.description}
+                                      type={question.type}
                                       setFieldValue={setFieldValue}
-                                      // id={questionsDetail.questionId}
+                                      // id={question.questionId}
                                     />
                                   </View>
-                                </View>
-                              ) : questionsDetail.type === "ImageGeoTag" ? (
-                                <View style={styles.questionCard}>
-                                  <View>
-                                    <UserImageGeoTagInput
-                                      name={questionsDetail.name}
-                                      pos={questionsDetail.questionPosition}
-                                      desc={questionsDetail.description}
-                                      type={questionsDetail.type}
-                                      setFieldValue={setFieldValue}
-                                      // id={questionsDetail.questionId}
-                                    />
-                                  </View>
-                                </View>
-                              ) : questionsDetail.type === "Signature" ? (
-                                <View style={styles.questionCard}>
-                                  <UserSignatureCaptureInput
-                                    name={questionsDetail.name}
-                                    pos={questionsDetail.questionPosition}
-                                    desc={questionsDetail.description}
-                                    type={questionsDetail.type}
-                                    setFieldValue={setFieldValue}
-                                    // id={questionsDetail.questionId}
-                                  />
-                                </View>
-                              ) : questionsDetail.type === "email" ? (
-                                <View style={styles.questionCard}>
-                                  <UserTextInput
-                                    name={questionsDetail.name}
-                                    pos={questionsDetail.questionPosition}
-                                    desc={questionsDetail.description}
-                                    type={questionsDetail.type}
-                                    onChange={handleChange(
-                                      questionsDetail.questionId
-                                    )}
-                                    questionMandatoryOption={
-                                      questionsDetail.questionMandatoryOption
-                                    }
-                                    autoCompleteType="email"
-                                    keyboardType="email-address"
-                                    autoCorrect={false}
-                                  />
-                                </View>
-                              ) : questionsDetail.type === "audio" ? (
-                                <View style={styles.questionCard}>
-                                  <UserAudioInput
-                                    name={questionsDetail.name}
-                                    pos={questionsDetail.questionPosition}
-                                    desc={questionsDetail.description}
-                                    type={questionsDetail.type}
-                                    setFieldValue={setFieldValue}
-                                    questionMandatoryOption={
-                                      questionsDetail.questionMandatoryOption
-                                    }
-                                    // id={questionsDetail.questionId}
-                                    autoCorrect={false}
-                                  />
-                                </View>
-                              ) : questionsDetail.type === "video" ? (
-                                <View style={styles.questionCard}>
-                                  <UserVideoInput
-                                    name={questionsDetail.name}
-                                    pos={questionsDetail.questionPosition}
-                                    desc={questionsDetail.description}
-                                    type={questionsDetail.type}
-                                    setFieldValue={setFieldValue}
-                                    questionMandatoryOption={
-                                      questionsDetail.questionMandatoryOption
-                                    }
-                                    // id={questionsDetail.questionId}
-                                    autoCorrect={false}
-                                  />
-                                </View>
-                              ) : questionsDetail.type === "LickerScale" ? (
-                                <View style={styles.questionCard}>
-                                  <UserLikertScaletInput
-                                    name={questionsDetail.name}
-                                    pos={questionsDetail.questionPosition}
-                                    desc={questionsDetail.description}
-                                    type={questionsDetail.type}
-                                    likerValue={questionsDetail.likerValue.split(
-                                      ","
-                                    )}
-                                    // id={questionsDetail.questionId}
-                                    setFieldValue={setFieldValue}
-                                  />
-                                </View>
-                              ) : questionsDetail.type === "Scale" ? (
-                                <View style={styles.questionCard}>
-                                  <UserSliderScaletInput
-                                    name={questionsDetail.name}
-                                    pos={questionsDetail.questionPosition}
-                                    desc={questionsDetail.description}
-                                    type={questionsDetail.type}
-                                    // id={questionsDetail.questionId}
-                                    maximum={Number(questionsDetail.Maximum)}
-                                    minimum={Number(questionsDetail.Minimum)}
-                                    setFieldValue={setFieldValue}
-                                    questionMandatoryOption={
-                                      questionsDetail.questionMandatoryOption
-                                    }
-                                  />
-                                </View>
-                              ) : questionsDetail.type === "rating" ? (
-                                <View style={styles.questionCard}>
-                                  <UserRatingInput
-                                    name={questionsDetail.name}
-                                    pos={questionsDetail.questionPosition}
-                                    desc={questionsDetail.description}
-                                    type={questionsDetail.type}
-                                    questionMandatoryOption={
-                                      questionsDetail.questionMandatoryOption
-                                    }
-                                    // id={questionsDetail.questionId}
-                                    setFieldValue={setFieldValue}
-                                  />
-                                </View>
-                              ) : questionsDetail.type === "note" ? (
-                                <View style={styles.questionCard}>
-                                  <UserNoteInput
-                                    name={questionsDetail.name}
-                                    pos={questionsDetail.questionPosition}
-                                    desc={questionsDetail.description}
-                                    type={questionsDetail.type}
-                                    onChange={handleChange(
-                                      questionsDetail.questionId
-                                    )}
-                                    questionMandatoryOption={
-                                      questionsDetail.questionMandatoryOption
-                                    }
-                                    autoCapitalize="words"
-                                    autoCorrect={false}
-                                  />
                                 </View>
                               ) : null}
                             </View>
@@ -511,7 +377,7 @@ function FormDetailsScreen({ route, navigation }) {
                     <SubmitButton
                       title="Submit"
                       onPress={handleSubmit}
-                      loading={loading}
+                      // loading={loading}
                       bwidth={160}
                     />
                   </View>
@@ -520,7 +386,7 @@ function FormDetailsScreen({ route, navigation }) {
             }}
           </Formik>
 
-          {/* <Text>{JSON.stringify(questionsDetails, null, 2)}</Text> */}
+          <Text>{JSON.stringify(questions, null, 2)}</Text>
         </ScrollView>
       </SafeAreaView>
     </>

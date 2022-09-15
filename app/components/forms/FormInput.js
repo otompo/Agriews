@@ -643,7 +643,7 @@ export const SingleSelect = ({
   desc,
   type,
   id,
-  questionsDetail,
+  question,
   questionMandatoryOption,
   setFieldValue,
   errors,
@@ -691,7 +691,7 @@ export const SingleSelect = ({
         {type}
       </Text>
 
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+      <View style={{ flexDirection: "row" }}>
         <TouchableOpacity style={styles.idButton}>
           <Text semi style={{ fontWeight: "bold", color: colors.white }}>
             {pos}
@@ -732,6 +732,7 @@ export const SingleSelect = ({
           </TouchableWithoutFeedback>
         ) : null}
       </View>
+
       {image ? (
         <>
           <View style={styles.closeIcon}>
@@ -758,7 +759,7 @@ export const SingleSelect = ({
         </Text>
       </View>
       <View>
-        {questionsDetail.choices.map((item) => (
+        {question.choices.map((item) => (
           <>
             <View style={{ marginBottom: 0.1, flexDirection: "row" }}>
               <RadioButton
@@ -1032,7 +1033,7 @@ export const UserSingleSelectInput = ({
   desc,
   type,
   id,
-  questionsDetail,
+  question,
   questionMandatoryOption,
   setFieldValue,
   errors,
@@ -1072,7 +1073,7 @@ export const UserSingleSelectInput = ({
           {name}
         </Text>
 
-        {checked === "yes" ? <Text>Upload And Image</Text> : null}
+        {/* {checked === "yes" ? <Text>Upload And Image</Text> : null} */}
 
         {questionMandatoryOption === "1" ? (
           <Text
@@ -1085,7 +1086,7 @@ export const UserSingleSelectInput = ({
         ) : null}
       </View>
       <View>
-        {questionsDetail.choices.map((item) => (
+        {question.choices.map((item) => (
           <>
             <View style={{ marginBottom: 0.1, flexDirection: "row" }}>
               <RadioButton
@@ -1114,7 +1115,7 @@ export const UserMultySelectInput = ({
   type,
   setFieldValue,
   questionMandatoryOption,
-  questionsDetail,
+  question,
   errors,
 }) => {
   const [check, setCheck] = useState(Array());
@@ -1128,7 +1129,7 @@ export const UserMultySelectInput = ({
       setCheck([...check, item]);
     }
 
-    setFieldValue(questionsDetail.questionId, [...check, item]);
+    setFieldValue(question.questionId, [...check, item]);
   };
 
   return (
@@ -1170,7 +1171,7 @@ export const UserMultySelectInput = ({
         ) : null}
       </View>
       <View>
-        {questionsDetail.options.map((item) => (
+        {question.options.map((item) => (
           <View
             style={{
               marginVertical: 1,
@@ -1766,6 +1767,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 12,
+    position: "absolute",
+    right: 30,
+    bottom: -5,
   },
   closeIcon: {
     //position: "absolute",
