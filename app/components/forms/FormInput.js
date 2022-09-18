@@ -84,6 +84,7 @@ export const UserTextInput = ({
         keyboardType={keyboardType}
         secureTextEntry={secureTextEntry}
         placeholderTextColor={colors.light}
+        name={name}
         style={{
           borderBottomWidth: 0.5,
           fontSize: 18,
@@ -277,9 +278,9 @@ export const UserDateInput = ({
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
-  React.useEffect(() => {
-    setFieldValue(id, getDate());
-  }, []);
+  // React.useEffect(() => {
+  //   setFieldValue(name, getDate());
+  // }, []);
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -290,7 +291,7 @@ export const UserDateInput = ({
   };
 
   const handleConfirm = (date) => {
-    setFieldValue(id, getDate(date));
+    setFieldValue(name, getDate(date));
     setDate(date);
     hideDatePicker();
   };
@@ -398,11 +399,11 @@ export const UserTimeInput = ({
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
 
   React.useEffect(() => {
-    setFieldValue(id, getTime());
+    setFieldValue(name, getTime());
   }, []);
 
   const handleTimeConfirm = (time) => {
-    setFieldValue(id, getTime(time));
+    setFieldValue(name, getTime(time));
     setTime(time);
     hideTimePicker();
   };
@@ -526,8 +527,8 @@ export const UserImageInput = ({
 }) => {
   const [image, setImage] = useState("");
   useEffect(() => {
-    setFieldValue(id, image);
-  }, [id, image]);
+    setFieldValue(name, image);
+  }, [name, image]);
 
   const openCamera = async () => {
     // Ask the user for the permission to access the camera
@@ -652,8 +653,8 @@ export const SingleSelect = ({
   const [checked, setChecked] = useState("");
   const [image, setImage] = useState("");
   useEffect(() => {
-    setFieldValue(id, checked, image);
-  }, [id, checked, image]);
+    setFieldValue(name, checked, image);
+  }, [name, checked, image]);
 
   const openCamera = async () => {
     // Ask the user for the permission to access the camera
@@ -794,7 +795,7 @@ export const UserImageGeoTagInput = ({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setFieldValue(id, location);
+    setFieldValue(name, location);
   }, [location]);
 
   const getLocation = async () => {
@@ -809,7 +810,7 @@ export const UserImageGeoTagInput = ({
       if (location) {
         const loc_str = JSON.stringify(location);
         setLocation(loc_str);
-        setFieldValue(id, loc_str);
+        setFieldValue(name, loc_str);
         alert(`Your Location have been picked successfully`);
         setLoading(false);
       } else {
@@ -911,8 +912,8 @@ export const UserVideoInput = ({
   const [status, setStatus] = React.useState({});
 
   useEffect(() => {
-    setFieldValue(id, video);
-  }, [id, video]);
+    setFieldValue(name, video);
+  }, [name, video]);
 
   const openCamera = async () => {
     // Ask the user for the permission to access the camera
@@ -1041,8 +1042,8 @@ export const UserSingleSelectInput = ({
   const [checked, setChecked] = useState("");
 
   useEffect(() => {
-    setFieldValue(id, checked);
-  }, [id, checked]);
+    setFieldValue(name, checked);
+  }, [name, checked]);
 
   return (
     <View style={{ marginHorizontal: 24 }}>
@@ -1090,8 +1091,8 @@ export const UserSingleSelectInput = ({
           <>
             <View style={{ marginBottom: 0.1, flexDirection: "row" }}>
               <RadioButton
-                value={item}
-                status={checked === item ? "checked" : "unchecked"}
+                value={item.toString()}
+                status={checked === item.toString() ? "checked" : "unchecked"}
                 onPress={() => setChecked(item)}
               />
               <Text style={{ marginTop: 8 }}>{item}</Text>
@@ -1129,7 +1130,7 @@ export const UserMultySelectInput = ({
       setCheck([...check, item]);
     }
 
-    setFieldValue(question.questionId, [...check, item]);
+    setFieldValue(name, [...check, item]);
   };
 
   return (
@@ -1213,8 +1214,8 @@ export const UserSliderScaletInput = ({
   const [value, setValue] = useState(0);
 
   useEffect(() => {
-    setFieldValue(id, value);
-  }, [id, value]);
+    setFieldValue(name, value);
+  }, [name, value]);
 
   return (
     <View style={{ marginHorizontal: 24 }}>
@@ -1288,8 +1289,8 @@ export const UserLikertScaletInput = ({
   const [option, setOption] = useState("");
 
   useEffect(() => {
-    setFieldValue(id, option);
-  }, [id, option]);
+    setFieldValue(name, option);
+  }, [name, option]);
 
   return (
     <View style={{ marginHorizontal: 24 }}>
@@ -1372,8 +1373,8 @@ export const UserBarQRCodeInput = ({
   const [showScanner, setShowScanner] = useState(false);
 
   useEffect(() => {
-    setFieldValue(id, scannedData);
-  }, [id, scannedData]);
+    setFieldValue(name, scannedData);
+  }, [name, scannedData]);
 
   const askPermissions = () => {
     (async () => {
@@ -1494,8 +1495,8 @@ export const UserRatingInput = ({
   const [rating, setRating] = useState("");
 
   useEffect(() => {
-    setFieldValue(id, rating);
-  }, [id, rating]);
+    setFieldValue(name, rating);
+  }, [name, rating]);
 
   const ratingCompleted = (rating) => {
     setRating(rating);
@@ -1615,8 +1616,8 @@ export const UserSignatureCaptureInput = ({
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    setFieldValue(id, image);
-  }, [id, image]);
+    setFieldValue(name, image);
+  }, [name, image]);
 
   const opneModal = () => {
     setOpen(true);

@@ -16,6 +16,7 @@ import {
 import axios from "axios";
 import colors from "../config/colors";
 import { UserAudioInput } from "../components/Audio/AudioInput";
+import { skipLogic } from "../utils/skipLogic";
 import {
   UserTextInput,
   UserPhoneInput,
@@ -161,27 +162,6 @@ function FormDetailsScreen({ route, navigation }) {
   //   );
   // }
 
-  function component_visiblity(question, answers) {
-    if (Object.keys(question).indexOf("visibleIf") > -1) {
-      let conditions = question["visibleIf"];
-
-      //get the field via regex
-      let field = conditions.match(/{\w+}/gm)[0];
-      field_strip = field.replace(/[{,}]/g, "");
-
-      //get value of question using the question name
-      let value_to_question = answers[field_strip];
-      //now replace the strings in conditions  with values
-      let replaced = conditions.replace(/{\w+}/g, value_to_question);
-      //convert condition into javascript executable
-      let out = eval(replaced);
-
-      return out;
-    } else {
-      return true;
-    }
-  }
-
   return (
     <>
       <Header
@@ -218,25 +198,23 @@ function FormDetailsScreen({ route, navigation }) {
                   <View>
                     {questions &&
                       questions.map((question, index) => {
-                        return (
+                        return skipLogic(question, values) ? (
                           <>
                             <View key={index}>
                               {question.type === "tell" ? (
-                                component_visiblity(question, values) ? (
-                                  <View style={styles.questionCard}>
-                                    <UserPhoneInput
-                                      name={question.name}
-                                      pos={question.questionPosition}
-                                      desc={question.description}
-                                      type={question.type}
-                                      // onChange={handleChange(question.questionId)}
-                                      questionMandatoryOption={
-                                        question.questionMandatoryOption
-                                      }
-                                      keyboardType="numeric"
-                                    />
-                                  </View>
-                                ) : null
+                                <View style={styles.questionCard}>
+                                  <UserPhoneInput
+                                    name={question.name}
+                                    pos={question.questionPosition}
+                                    desc={question.description}
+                                    type={question.type}
+                                    // onChange={handleChange(question.questionId)}
+                                    questionMandatoryOption={
+                                      question.questionMandatoryOption
+                                    }
+                                    keyboardType="numeric"
+                                  />
+                                </View>
                               ) : question.type === "text" ? (
                                 <View style={styles.questionCard}>
                                   <UserTextInput
@@ -304,34 +282,30 @@ function FormDetailsScreen({ route, navigation }) {
                                   </View>
                                 </View>
                               ) : question.type === "radiogroup" ? (
-                                component_visiblity(question, values) ? (
-                                  <View style={styles.questionCard}>
-                                    <UserSingleSelectInput
-                                      name={question.name}
-                                      pos={question.questionPosition}
-                                      desc={question.description}
-                                      question={question}
-                                      id={question.id}
-                                      setFieldValue={setFieldValue}
-                                      type={question.type}
-                                    />
-                                  </View>
-                                ) : null
+                                <View style={styles.questionCard}>
+                                  <UserSingleSelectInput
+                                    name={question.name}
+                                    pos={question.questionPosition}
+                                    desc={question.description}
+                                    question={question}
+                                    id={question.id}
+                                    setFieldValue={setFieldValue}
+                                    type={question.type}
+                                  />
+                                </View>
                               ) : question.type === "checkbox" ? (
-                                component_visiblity(question, values) ? (
-                                  <View style={styles.questionCard}>
-                                    <UserSingleSelectInput
-                                      name={question.name}
-                                      pos={question.questionPosition}
-                                      desc={question.description}
-                                      question={question}
-                                      // id={question.questionId}
-                                      setFieldValue={setFieldValue}
-                                      type={question.type}
-                                      // visibleIf={question.visibleIf}
-                                    />
-                                  </View>
-                                ) : null
+                                <View style={styles.questionCard}>
+                                  <UserSingleSelectInput
+                                    name={question.name}
+                                    pos={question.questionPosition}
+                                    desc={question.description}
+                                    question={question}
+                                    // id={question.questionId}
+                                    setFieldValue={setFieldValue}
+                                    type={question.type}
+                                    // visibleIf={question.visibleIf}
+                                  />
+                                </View>
                               ) : question.type === "MultipleChoice" ? (
                                 <View style={styles.questionCard}>
                                   <UserMultySelectInput
@@ -370,7 +344,7 @@ function FormDetailsScreen({ route, navigation }) {
                               ) : null}
                             </View>
                           </>
-                        );
+                        ) : null;
                       })}
                   </View>
                   <View flex style={styles.buttonContainer}>
@@ -386,7 +360,7 @@ function FormDetailsScreen({ route, navigation }) {
             }}
           </Formik>
 
-          <Text>{JSON.stringify(questions, null, 2)}</Text>
+          {/* <Text>{JSON.stringify(questions, null, 2)}</Text> */}
         </ScrollView>
       </SafeAreaView>
     </>
