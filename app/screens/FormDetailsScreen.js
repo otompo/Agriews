@@ -25,7 +25,6 @@ import {
   UserNoteInput,
   UserImageInput,
   UserVideoInput,
-  //UserAudioInput,
   UserSingleSelectInput,
   UserMultySelectInput,
   UserSliderScaletInput,
@@ -35,7 +34,6 @@ import {
   UserIntroductoryInput,
   UserSignatureCaptureInput,
   UserImageGeoTagInput,
-  SingleSelect,
 } from "../components/forms/FormInput";
 import SubmitButton from "../components/Button/SubmitButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -109,41 +107,7 @@ function FormDetailsScreen({ route, navigation }) {
   }, [questions]);
 
   const handleSubmitForm = async (values) => {
-    try {
-      setLoading(true);
-
-      var queryString = Object.keys(values)
-        .map((key) => {
-          return (
-            encodeURIComponent(key) + "=" + encodeURIComponent(values[key])
-          );
-        })
-        .join("&");
-
-      const { data } = await axios.post(`/questionResponse`);
-
-      //update response statistics
-
-      if (Platform.OS === "android") {
-        ToastAndroid.showWithGravityAndOffset(
-          data.message,
-          ToastAndroid.SHORT,
-          ToastAndroid.BOTTOM,
-          25,
-          50
-        );
-      } else {
-        AlertIOS.alert(data.message);
-      }
-
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
-      Alert.alert(err.toString());
-      setLoading(false);
-    } finally {
-      setLoading(false);
-    }
+    console.log(values);
   };
 
   // if (loading) {
@@ -197,10 +161,10 @@ function FormDetailsScreen({ route, navigation }) {
                 <>
                   <View>
                     {questions &&
-                      questions.map((question, index) => {
+                      questions.map((question, i) => {
                         return skipLogic(question, values) ? (
                           <>
-                            <View key={index}>
+                            <View key={i}>
                               {question.type === "tell" ? (
                                 <View style={styles.questionCard}>
                                   <UserPhoneInput
@@ -208,10 +172,9 @@ function FormDetailsScreen({ route, navigation }) {
                                     pos={question.questionPosition}
                                     desc={question.description}
                                     type={question.type}
-                                    // onChange={handleChange(question.questionId)}
-                                    questionMandatoryOption={
-                                      question.questionMandatoryOption
-                                    }
+                                    onChange={handleChange(
+                                      question.description
+                                    )}
                                     keyboardType="numeric"
                                   />
                                 </View>
@@ -222,10 +185,9 @@ function FormDetailsScreen({ route, navigation }) {
                                     pos={question.questionPosition}
                                     desc={question.description}
                                     type={question.type}
-                                    // onChange={handleChange(question.id)}
-                                    questionMandatoryOption={
-                                      question.questionMandatoryOption
-                                    }
+                                    onChange={handleChange(
+                                      question.description
+                                    )}
                                     autoCapitalize="words"
                                     autoCorrect={false}
                                   />
@@ -240,17 +202,14 @@ function FormDetailsScreen({ route, navigation }) {
                                   >
                                     <UserDateInput
                                       name={question.name}
-                                      // id={question.questionId}
+                                      id={question.questionId}
                                       pos={question.questionPosition}
                                       desc={question.description}
                                       type={question.type}
                                       setFieldValue={setFieldValue}
                                       onChange={handleChange(
-                                        question.questionId
+                                        question.description
                                       )}
-                                      questionMandatoryOption={
-                                        question.questionMandatoryOption
-                                      }
                                       autoCapitalize="words"
                                       autoCorrect={false}
                                     />
@@ -270,13 +229,10 @@ function FormDetailsScreen({ route, navigation }) {
                                       desc={question.description}
                                       type={question.type}
                                       onChange={handleChange(
-                                        question.questionId
+                                        question.description
                                       )}
-                                      questionMandatoryOption={
-                                        question.questionMandatoryOption
-                                      }
                                       setFieldValue={setFieldValue}
-                                      // id={question.questionId}
+                                      id={question.name}
                                       autoCorrect={false}
                                     />
                                   </View>
@@ -288,7 +244,7 @@ function FormDetailsScreen({ route, navigation }) {
                                     pos={question.questionPosition}
                                     desc={question.description}
                                     question={question}
-                                    id={question.id}
+                                    id={question.description}
                                     setFieldValue={setFieldValue}
                                     type={question.type}
                                   />
@@ -300,7 +256,7 @@ function FormDetailsScreen({ route, navigation }) {
                                     pos={question.questionPosition}
                                     desc={question.description}
                                     question={question}
-                                    // id={question.questionId}
+                                    id={question.description}
                                     setFieldValue={setFieldValue}
                                     type={question.type}
                                     // visibleIf={question.visibleIf}
@@ -313,6 +269,7 @@ function FormDetailsScreen({ route, navigation }) {
                                     name={question.name}
                                     pos={question.questionPosition}
                                     desc={question.description}
+                                    id={question.description}
                                     type={question.type}
                                     question={question}
                                   />
@@ -325,7 +282,7 @@ function FormDetailsScreen({ route, navigation }) {
                                     desc={question.description}
                                     type={question.type}
                                     setFieldValue={setFieldValue}
-                                    // id={question.questionId}
+                                    id={question.name}
                                   />
                                 </View>
                               ) : question.type === "file" ? (
@@ -337,7 +294,7 @@ function FormDetailsScreen({ route, navigation }) {
                                       desc={question.description}
                                       type={question.type}
                                       setFieldValue={setFieldValue}
-                                      // id={question.questionId}
+                                      id={question.description}
                                     />
                                   </View>
                                 </View>
@@ -360,7 +317,7 @@ function FormDetailsScreen({ route, navigation }) {
             }}
           </Formik>
 
-          {/* <Text>{JSON.stringify(questions, null, 2)}</Text> */}
+          <Text>{JSON.stringify(questions, null, 2)}</Text>
         </ScrollView>
       </SafeAreaView>
     </>

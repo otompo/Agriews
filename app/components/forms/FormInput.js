@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   TextInput,
@@ -37,8 +37,6 @@ export const UserTextInput = ({
   autoCapitalize = "none",
   keyboardType = "default",
   secureTextEntry = false,
-  questionMandatoryOption,
-  errors,
 }) => {
   return (
     <View style={{ marginHorizontal: 24 }}>
@@ -67,16 +65,6 @@ export const UserTextInput = ({
         >
           {name}
         </Text>
-
-        {questionMandatoryOption === "1" ? (
-          <Text
-            semi
-            color={colors.danger}
-            style={{ marginLeft: 3, fontSize: 16 }}
-          >
-            *
-          </Text>
-        ) : null}
       </View>
       <TextInput
         autoCorrect={false}
@@ -105,16 +93,7 @@ export const UserTextInput = ({
   );
 };
 
-export const UserNoteInput = ({
-  name,
-  pos,
-  desc,
-  type,
-  value,
-  onChange,
-  questionMandatoryOption,
-  errors,
-}) => {
+export const UserNoteInput = ({ name, pos, desc, type, value, onChange }) => {
   return (
     <View style={{ marginHorizontal: 24 }}>
       <Text
@@ -148,16 +127,6 @@ export const UserNoteInput = ({
         >
           {name}
         </Text>
-
-        {questionMandatoryOption === "2" ? (
-          <Text
-            semi
-            color={colors.danger}
-            style={{ marginLeft: 3, fontSize: 16 }}
-          >
-            *
-          </Text>
-        ) : null}
       </View>
       <AutoGrowingTextInput
         style={{
@@ -192,8 +161,6 @@ export const UserPhoneInput = ({
   autoCapitalize = "none",
   keyboardType = "default",
   secureTextEntry = false,
-  questionMandatoryOption,
-  errors,
 }) => {
   return (
     <View style={{ marginHorizontal: 24 }}>
@@ -222,16 +189,6 @@ export const UserPhoneInput = ({
         >
           {name}
         </Text>
-
-        {questionMandatoryOption === "1" ? (
-          <Text
-            semi
-            color={colors.danger}
-            style={{ marginLeft: 3, fontSize: 16 }}
-          >
-            *
-          </Text>
-        ) : null}
       </View>
 
       <TextInput
@@ -271,8 +228,6 @@ export const UserDateInput = ({
   autoCapitalize = "none",
   keyboardType = "default",
   secureTextEntry = false,
-  questionMandatoryOption,
-  errors,
 }) => {
   const [date, setDate] = useState(new Date());
 
@@ -330,16 +285,6 @@ export const UserDateInput = ({
         >
           {name}
         </Text>
-
-        {questionMandatoryOption === "1" ? (
-          <Text
-            semi
-            color={colors.danger}
-            style={{ marginLeft: 3, fontSize: 16 }}
-          >
-            *
-          </Text>
-        ) : null}
       </View>
       <View style={{ flexDirection: "row" }}>
         <TextInput
@@ -392,8 +337,6 @@ export const UserTimeInput = ({
   autoCapitalize = "none",
   keyboardType = "default",
   secureTextEntry = false,
-  questionMandatoryOption,
-  errors,
 }) => {
   const [time, setTime] = useState(new Date());
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
@@ -462,16 +405,6 @@ export const UserTimeInput = ({
         >
           {name}
         </Text>
-
-        {questionMandatoryOption === "1" ? (
-          <Text
-            semi
-            color={colors.danger}
-            style={{ marginLeft: 3, fontSize: 16 }}
-          >
-            *
-          </Text>
-        ) : null}
       </View>
       <View style={{ flexDirection: "row" }}>
         <TextInput
@@ -522,13 +455,11 @@ export const UserImageInput = ({
   id,
   setFieldValue,
   onChange,
-  questionMandatoryOption,
-  errors,
 }) => {
   const [image, setImage] = useState("");
   useEffect(() => {
-    setFieldValue(name, image);
-  }, [name, image]);
+    setFieldValue(id, image);
+  }, [id, image]);
 
   const openCamera = async () => {
     // Ask the user for the permission to access the camera
@@ -586,16 +517,6 @@ export const UserImageInput = ({
           >
             {name}
           </Text>
-
-          {questionMandatoryOption === "1" ? (
-            <Text
-              semi
-              color={colors.danger}
-              style={{ marginLeft: 3, fontSize: 16 }}
-            >
-              *
-            </Text>
-          ) : null}
         </View>
 
         <TouchableWithoutFeedback onPress={openCamera}>
@@ -638,150 +559,6 @@ export const UserImageInput = ({
   );
 };
 
-export const SingleSelect = ({
-  name,
-  pos,
-  desc,
-  type,
-  id,
-  question,
-  questionMandatoryOption,
-  setFieldValue,
-  errors,
-  onChange,
-}) => {
-  const [checked, setChecked] = useState("");
-  const [image, setImage] = useState("");
-  useEffect(() => {
-    setFieldValue(name, checked, image);
-  }, [name, checked, image]);
-
-  const openCamera = async () => {
-    // Ask the user for the permission to access the camera
-    const permissionResult =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (permissionResult.granted !== true) {
-      alert("You've refused to allow this app to access your camera!");
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync();
-    // Explore the result
-    if (!result.cancelled) {
-      setFieldValue(result.uri);
-      setImage(result.uri);
-    }
-  };
-
-  const handleRemoveImage = () => {
-    if (!image) setImage();
-    else
-      Alert.alert("Delete", "Are you sure you want to delete this image?", [
-        { text: "Yes", onPress: () => setImage(null) },
-        { text: "No" },
-      ]);
-  };
-
-  return (
-    <View style={{ marginHorizontal: 24 }}>
-      <Text
-        color={colors.primary}
-        style={{ textTransform: "uppercase", marginBottom: 7 }}
-      >
-        {type}
-      </Text>
-
-      <View style={{ flexDirection: "row" }}>
-        <TouchableOpacity style={styles.idButton}>
-          <Text semi style={{ fontWeight: "bold", color: colors.white }}>
-            {pos}
-          </Text>
-        </TouchableOpacity>
-
-        <Text
-          medium
-          color={colors.medium}
-          style={{
-            marginBottom: 5,
-            marginLeft: 10,
-            fontWeight: "bold",
-            textTransform: "capitalize",
-          }}
-        >
-          {name}
-        </Text>
-
-        {questionMandatoryOption === "1" ? (
-          <Text
-            semi
-            color={colors.danger}
-            style={{ marginLeft: 3, fontSize: 16 }}
-          >
-            *
-          </Text>
-        ) : null}
-        {checked === "yes" ? (
-          <TouchableWithoutFeedback onPress={openCamera}>
-            <View style={styles.mediaContainer}>
-              <MaterialCommunityIcons
-                color={colors.medium}
-                name="image"
-                size={40}
-              />
-            </View>
-          </TouchableWithoutFeedback>
-        ) : null}
-      </View>
-
-      {image ? (
-        <>
-          <View style={styles.closeIcon}>
-            <TouchableWithoutFeedback onPress={handleRemoveImage}>
-              <MaterialCommunityIcons
-                name="close-circle"
-                size={25}
-                color={colors.danger}
-              />
-            </TouchableWithoutFeedback>
-          </View>
-          <Image
-            source={{ uri: image }}
-            value={image}
-            onChange={onChange}
-            style={styles.image}
-          />
-        </>
-      ) : null}
-
-      <View>
-        <Text size={10} style={{ marginBottom: 5 }}>
-          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
-        </Text>
-      </View>
-      <View>
-        {question.choices.map((item) => (
-          <>
-            <View style={{ marginBottom: 0.1, flexDirection: "row" }}>
-              <RadioButton
-                value={item}
-                status={checked === item ? "checked" : "unchecked"}
-                onPress={() => setChecked(item)}
-              />
-              <Text style={{ marginTop: 8 }}>{item}</Text>
-            </View>
-          </>
-        ))}
-      </View>
-      <View>
-        <Text size={10} style={{ marginBottom: 5 }}>
-          <Icon name="alert-circle-outline" color={colors.primary} /> {desc}
-        </Text>
-      </View>
-    </View>
-  );
-};
-
 export const UserImageGeoTagInput = ({
   name,
   pos,
@@ -789,7 +566,6 @@ export const UserImageGeoTagInput = ({
   type,
   id,
   setFieldValue,
-  questionMandatoryOption,
 }) => {
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -856,16 +632,6 @@ export const UserImageGeoTagInput = ({
           >
             {name}
           </Text>
-
-          {questionMandatoryOption === "1" ? (
-            <Text
-              semi
-              color={colors.danger}
-              style={{ marginLeft: 3, fontSize: 16 }}
-            >
-              *
-            </Text>
-          ) : null}
         </View>
         <TouchableOpacity onPress={getLocation} style={styles.geoButton}>
           <Text style={styles.text}>
@@ -904,7 +670,6 @@ export const UserVideoInput = ({
   type,
   id,
   setFieldValue,
-  questionMandatoryOption,
 }) => {
   const [video, setVideo] = useState("");
 
@@ -973,16 +738,6 @@ export const UserVideoInput = ({
           >
             {name}
           </Text>
-
-          {questionMandatoryOption === "1" ? (
-            <Text
-              semi
-              color={colors.danger}
-              style={{ marginLeft: 3, fontSize: 16 }}
-            >
-              *
-            </Text>
-          ) : null}
         </View>
 
         <TouchableWithoutFeedback onPress={openCamera}>
@@ -1035,15 +790,14 @@ export const UserSingleSelectInput = ({
   type,
   id,
   question,
-  questionMandatoryOption,
   setFieldValue,
   errors,
 }) => {
   const [checked, setChecked] = useState("");
 
   useEffect(() => {
-    setFieldValue(name, checked);
-  }, [name, checked]);
+    setFieldValue(id, checked);
+  }, [id, checked]);
 
   return (
     <View style={{ marginHorizontal: 24 }}>
@@ -1075,16 +829,6 @@ export const UserSingleSelectInput = ({
         </Text>
 
         {/* {checked === "yes" ? <Text>Upload And Image</Text> : null} */}
-
-        {questionMandatoryOption === "1" ? (
-          <Text
-            semi
-            color={colors.danger}
-            style={{ marginLeft: 3, fontSize: 16 }}
-          >
-            *
-          </Text>
-        ) : null}
       </View>
       <View>
         {question.choices.map((item) => (
@@ -1114,12 +858,14 @@ export const UserMultySelectInput = ({
   pos,
   desc,
   type,
+  id,
   setFieldValue,
-  questionMandatoryOption,
   question,
-  errors,
 }) => {
   const [check, setCheck] = useState(Array());
+  useEffect(() => {
+    setFieldValue(id, check);
+  }, [id, check]);
 
   const setSelected = (item) => {
     const flt = check.indexOf(item);
@@ -1130,7 +876,7 @@ export const UserMultySelectInput = ({
       setCheck([...check, item]);
     }
 
-    setFieldValue(name, [...check, item]);
+    setFieldValue(id, [...check, item]);
   };
 
   return (
@@ -1161,15 +907,6 @@ export const UserMultySelectInput = ({
         >
           {name}
         </Text>
-        {questionMandatoryOption === "1" ? (
-          <Text
-            semi
-            color={colors.danger}
-            style={{ marginLeft: 3, fontSize: 16 }}
-          >
-            *
-          </Text>
-        ) : null}
       </View>
       <View>
         {question.options.map((item) => (
@@ -1206,7 +943,6 @@ export const UserSliderScaletInput = ({
   desc,
   type,
   id,
-  questionMandatoryOption,
   setFieldValue,
   maximum,
   minimum,
@@ -1245,16 +981,6 @@ export const UserSliderScaletInput = ({
         >
           {name}
         </Text>
-
-        {questionMandatoryOption === "1" ? (
-          <Text
-            semi
-            color={colors.danger}
-            style={{ marginLeft: 3, fontSize: 16 }}
-          >
-            *
-          </Text>
-        ) : null}
       </View>
       <Slider
         min={minimum}
@@ -1281,7 +1007,6 @@ export const UserLikertScaletInput = ({
   desc,
   type,
   id,
-  questionMandatoryOption,
   setFieldValue,
   likerValue,
   errors,
@@ -1320,16 +1045,6 @@ export const UserLikertScaletInput = ({
         >
           {name}
         </Text>
-
-        {questionMandatoryOption === "1" ? (
-          <Text
-            semi
-            color={colors.danger}
-            style={{ marginLeft: 3, fontSize: 16 }}
-          >
-            *
-          </Text>
-        ) : null}
       </View>
       <ScrollView>
         {likerValue.map((item) => (
@@ -1364,9 +1079,7 @@ export const UserBarQRCodeInput = ({
   desc,
   type,
   id,
-  questionMandatoryOption,
   setFieldValue,
-  errors,
 }) => {
   const [scanned, setScanned] = useState(false);
   const [scannedData, setScannedData] = useState("");
@@ -1449,16 +1162,6 @@ export const UserBarQRCodeInput = ({
           >
             {name}
           </Text>
-
-          {questionMandatoryOption === "1" ? (
-            <Text
-              semi
-              color={colors.danger}
-              style={{ marginLeft: 3, fontSize: 16 }}
-            >
-              *
-            </Text>
-          ) : null}
         </View>
 
         <Pressable style={styles.sbutton} onPress={askPermissions}>
@@ -1489,7 +1192,6 @@ export const UserRatingInput = ({
   desc,
   type,
   id,
-  questionMandatoryOption,
   setFieldValue,
 }) => {
   const [rating, setRating] = useState("");
@@ -1531,16 +1233,6 @@ export const UserRatingInput = ({
           >
             {name}
           </Text>
-
-          {questionMandatoryOption === "1" ? (
-            <Text
-              semi
-              color={colors.danger}
-              style={{ marginLeft: 3, fontSize: 16 }}
-            >
-              *
-            </Text>
-          ) : null}
         </View>
         <Rating
           onFinishRating={ratingCompleted}
@@ -1609,7 +1301,6 @@ export const UserSignatureCaptureInput = ({
   id,
   setFieldValue,
   onChange,
-  questionMandatoryOption,
   errors,
 }) => {
   const [image, setImage] = useState("");
@@ -1662,16 +1353,6 @@ export const UserSignatureCaptureInput = ({
             >
               {name}
             </Text>
-
-            {questionMandatoryOption === "1" ? (
-              <Text
-                semi
-                color={colors.danger}
-                style={{ marginLeft: 3, fontSize: 16 }}
-              >
-                *
-              </Text>
-            ) : null}
           </View>
 
           <TouchableWithoutFeedback onPress={opneModal}>
